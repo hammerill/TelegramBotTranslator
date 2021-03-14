@@ -21,10 +21,6 @@ namespace TGBotCSharp
         {
             Console.WriteLine($"Got {{\n{result}\n}}. Parsing this...");
         }
-        static public void Returning(string result)
-        {
-            Console.WriteLine($"Returning parsed \"{result}\".");
-        }
         static public void Err(int errType = 0, int userId = 0, string info = "")
         {
             switch (errType)

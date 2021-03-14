@@ -75,21 +75,21 @@ namespace TGBotCSharp
         public void AddUpdateUserInDB(int userId, bool isFromEnglish)
         {
             SQLiteCommand command = Connection.CreateCommand();
+            bool isAdding = !IsUserExistsInDB(userId);
 
-            if (IsUserExistsInDB(userId))
+            if (Debug) { Logger.AddUpdateUser(userId, isFromEnglish, isAdding); }
+
+            if (isAdding)
             {
-                if (Debug) { Logger.AddUpdateUser(userId, isFromEnglish, false); }
                 command.CommandText = "UPDATE Languages SET isFromEnglish = $isFromEnglish WHERE userId = $userId";
-                command.Parameters.AddWithValue("$userId", userId);
-                command.Parameters.AddWithValue("$isFromEnglish", isFromEnglish ? 1 : 0);
             }
             else
             {
-                if (Debug) { Logger.AddUpdateUser(userId, isFromEnglish, true); }
                 command.CommandText = "INSERT INTO Languages VALUES ($userId, $isFromEnglish)";
-                command.Parameters.AddWithValue("$userId", userId);
-                command.Parameters.AddWithValue("$isFromEnglish", isFromEnglish ? 1 : 0);
             }
+
+            command.Parameters.AddWithValue("$userId", userId);
+            command.Parameters.AddWithValue("$isFromEnglish", isFromEnglish ? 1 : 0);
 
             command.ExecuteNonQuery();
         }

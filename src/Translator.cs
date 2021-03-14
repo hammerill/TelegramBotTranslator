@@ -19,7 +19,6 @@ namespace TGBotCSharp
             try
             {
                 result = Parser.Parse(result);
-                if (debug) { Logger.Returning(result); }
                 return result;
             }
             catch

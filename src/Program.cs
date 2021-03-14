@@ -25,7 +25,7 @@ namespace TGBotCSharp
                 return -1;
             }
 
-            sql = new("..\\..\\..\\userparams.db"/*, debug: true*/);
+            sql = new("..\\..\\..\\userparams.db", bs.DebugLog);
             users = sql.GetAllUsers();
 
             try
@@ -40,6 +40,10 @@ namespace TGBotCSharp
             bot.OnMessage += GotMessage;
             bot.StartReceiving();
 
+            if (bs.DebugLog)
+            {
+                Console.WriteLine("Debug log enabled.");
+            }
             Logger.Started();
             Console.ReadKey();
 
@@ -82,7 +86,7 @@ namespace TGBotCSharp
                     }
                 }
 
-                string Translated = Translator.Translate(e.Message.Text, user.IsFromEnglish/*, debug: true*/);
+                string Translated = Translator.Translate(e.Message.Text, user.IsFromEnglish, bs.DebugLog);
                 await bot.SendTextMessageAsync(e.Message.Chat, Translated);
 
                 Logger.Sent(e, Translated);

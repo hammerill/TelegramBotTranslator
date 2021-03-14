@@ -37,6 +37,7 @@ namespace TGBotCSharp
             try
             {
                 toReturn.TokenString = json["tokenString"];
+                toReturn.DebugLog = json["debugLog"];
             }
             catch (System.Exception)
             {
@@ -50,6 +51,7 @@ namespace TGBotCSharp
     class BotSettings
     {
         public string TokenString { get; set; }
+        public bool DebugLog { get; set; }
 
         public BotSettings() {}
     }
