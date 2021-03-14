@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Hammerill\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Hammerill\\.nuget\\packages",
+      "D:\\Progs\\VS2019Shared\\NuGetPackages"
+    ]
+  }
+}
