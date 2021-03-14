@@ -1,3 +1,4 @@
 ﻿{
-  "tokenString": "INSERT YOUR BOT TOKEN HERE"
+  "tokenString": "INSERT YOUR BOT TOKEN HERE",
+  "debugLog": true
 }
