@@ -36,8 +36,11 @@ namespace TGBotCSharp
 
             try
             {
-                toReturn.TokenString = json["tokenString"];
-                toReturn.DebugLog = json["debugLog"];
+                toReturn.TokenString        = json["tokenString"];
+                toReturn.ErrorStickerId     = json["errorStickerId"];
+                toReturn.LogFileLocation    = json["logFileLocation"];
+                toReturn.DevLogFileLocation = json["devLogFileLocation"];
+                toReturn.DBLocation         = json["dbLocation"];
             }
             catch (System.Exception)
             {
@@ -51,7 +54,10 @@ namespace TGBotCSharp
     class BotSettings
     {
         public string TokenString { get; set; }
-        public bool DebugLog { get; set; }
+        public string DevLogFileLocation { get; set; }
+        public string LogFileLocation { get; set; }
+        public string DBLocation { get; set; }
+        public string ErrorStickerId { get; set; }
 
         public BotSettings() {}
     }

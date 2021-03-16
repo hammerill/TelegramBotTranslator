@@ -1,41 +1,63 @@
 ﻿using System;
+using System.IO;
 using Telegram.Bot.Args;
 
 namespace TGBotCSharp
 {
     static class Logger
     {
+        static public string LogFileLocation { get; set; }
+        static public string DevLogFileLocation { get; set; }
+
+        static private void Log(string toLog, bool isAdvanced)
+        {
+            string logString = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.ff - ") + toLog;
+
+            StreamWriter sw = new(DevLogFileLocation, true);
+            sw.WriteLine(logString);
+
+            if (!isAdvanced)
+            {
+                Console.WriteLine(logString);
+
+                sw.Close();
+                sw = new(LogFileLocation, true);
+                sw.WriteLine(logString);
+            }
+
+            sw.Close();
+        }
         static public void Got(MessageEventArgs e)
         {
-            Console.WriteLine($"{e.Message.From.Id}:{e.Message.From.FirstName}:\t\t\"{e.Message.Text}\".");
+            Log($"{e.Message.From.Id}:{e.Message.From.FirstName}:\t\t\"{e.Message.Text}\".", false);
         }
         static public void Sent(MessageEventArgs e, string msgText)
         {
-            Console.WriteLine($"Bot to {e.Message.From.Id}:{e.Message.From.FirstName}:\t\"{msgText}\".\n\n");
+            Log($"Bot to {e.Message.From.Id}:{e.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
         }
         static public void Requesting(string url)
         {
-            Console.WriteLine($"Sending request to {{\n{url}\n}}.");
+            Log($"Sending request to {{\n{url}\n}}.", true);
         }
         static public void GotResponse(string result)
         {
-            Console.WriteLine($"Got {{\n{result}\n}}. Parsing this...");
+            Log($"Got {{\n{result}\n}}. Parsing this...", true);
         }
         static public void Err(int errType = 0, int userId = 0, string info = "")
         {
             switch (errType)
             {
                 case 0:
-                    Console.WriteLine("Error occured while parsing, returning error string.");
+                    Log("Error occured while parsing, returning null string.", false);
                     break;
                 case 1:
-                    Console.WriteLine($"Error ({info}) occured while reading user {userId} at DB, returning null.");
+                    Log($"Error ({info}) occured while reading user {userId} at DB, returning null.", true);
                     break;
                 case 2:
-                    Console.WriteLine($"Cannot find user {userId} in database, returning null.");
+                    Log($"Cannot find user {userId} in database, returning null.", true);
                     break;
                 case 3:
-                    Console.WriteLine($"Cannot find user {userId} in UserParams list, returning null.");
+                    Log($"Cannot find user {userId} in UserParams list, returning null.", true);
                     break;
                 default:
                     break;
@@ -45,42 +67,42 @@ namespace TGBotCSharp
         {
             if (isAdding)
             {
-                Console.WriteLine($"{userId} - new user, adding him to DB with parameter isFromEnglish = {isFromEnglish}...");
+                Log($"{userId} is a new user, adding him to DB with parameter isFromEnglish = {isFromEnglish}...", true);
             }
             else
             {
-                Console.WriteLine($"{userId} - existing user, updating isFromEnglish to {isFromEnglish} at the DB...");
+                Log($"{userId} is a existing user, updating isFromEnglish to {isFromEnglish} at the DB...", true);
             }
         }
         static public void Started()
         {
-            Console.WriteLine("Awaiting messages, press any key to stop.\n\n");
+            Log($"Awaiting messages, press any key to stop.\n", false);
         }
         static public void LangChange(MessageEventArgs e, bool isFromEnglish)
         {
             if (isFromEnglish)
             {
-                Console.WriteLine($"{e.Message.From.Id}:{e.Message.From.FirstName} switching language to \"English\" -> \"Russian\".");
+                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching language to \"English\" -> \"Russian\".", false);
             }
             else
             {
-                Console.WriteLine($"{e.Message.From.Id}:{e.Message.From.FirstName} switching language to \"Russian\" -> \"English\".");
+                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching language to \"Russian\" -> \"English\".", false);
             }
         }
         static public void FoundUser(int userId, bool isFromDb)
         {
             if (isFromDb)
             {
-                Console.WriteLine($"Found a {userId} in database.\n");
+                Log($"Found a {userId} in database.", true);
             }
             else
             {
-                Console.WriteLine($"Found a {userId} in UserParams list.");
+                Log($"Found a {userId} in UserParams list.", true);
             }
         }
         static public void Replacing(int userId, bool isFromEnglish)
         {
-            Console.WriteLine($"Replacing {userId} in UserParams list with new element, where isFromEnglish = {isFromEnglish}.");
+            Log($"Replacing {userId} in UserParams list with new element, where isFromEnglish = {isFromEnglish}.", true);
         }
     }
 }

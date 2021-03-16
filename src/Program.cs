@@ -25,7 +25,10 @@ namespace TGBotCSharp
                 return -1;
             }
 
-            sql = new("..\\..\\..\\userparams.db", bs.DebugLog);
+            Logger.LogFileLocation = bs.LogFileLocation;
+            Logger.DevLogFileLocation = bs.DevLogFileLocation;
+
+            sql = new(bs.DBLocation);
             users = sql.GetAllUsers();
 
             try
@@ -40,10 +43,6 @@ namespace TGBotCSharp
             bot.OnMessage += GotMessage;
             bot.StartReceiving();
 
-            if (bs.DebugLog)
-            {
-                Console.WriteLine("Debug log enabled.");
-            }
             Logger.Started();
             Console.ReadKey();
 
@@ -74,7 +73,7 @@ namespace TGBotCSharp
             {
                 Logger.Got(e);
 
-                UserParams user = sql.GetUserInList(users, e.Message.From.Id);
+                UserParams user = SQLiter.GetUserInList(users, e.Message.From.Id);
                 if (user == null)
                 {
                     user = sql.GetUserInDB(e.Message.From.Id);
@@ -86,10 +85,18 @@ namespace TGBotCSharp
                     }
                 }
 
-                string Translated = Translator.Translate(e.Message.Text, user.IsFromEnglish, bs.DebugLog);
-                await bot.SendTextMessageAsync(e.Message.Chat, Translated);
+                string Translated = Translator.Translate(e.Message.Text, user.IsFromEnglish);
+                if (Translated == null)
+                {
+                    await bot.SendStickerAsync(e.Message.Chat, bs.ErrorStickerId);
+                    Logger.Sent(e, "{Error sticker}");
+                }
+                else
+                {
+                    await bot.SendTextMessageAsync(e.Message.Chat, Translated);
+                    Logger.Sent(e, Translated);
+                }
 
-                Logger.Sent(e, Translated);
             }
             else if (e.Message.Text == fromRussian || e.Message.Text == fromEnglish)
             {
@@ -116,7 +123,7 @@ namespace TGBotCSharp
             {
                 Logger.Got(e);
 
-                UserParams user = sql.GetUserInList(users, e.Message.From.Id);
+                UserParams user = SQLiter.GetUserInList(users, e.Message.From.Id);
                 if (user == null)
                 {
                     user = sql.GetUserInDB(e.Message.From.Id);
@@ -131,7 +138,7 @@ namespace TGBotCSharp
                 string MsgText = "Выберите язык и бот будет переводить введённый вами текст.";
                 await bot.SendTextMessageAsync(e.Message.Chat, MsgText, replyMarkup: rkm);
 
-                Logger.Sent(e, MsgText);
+                Logger.Sent(e, "{Start message}");
             }
         }
 
@@ -139,7 +146,7 @@ namespace TGBotCSharp
         {
             Logger.LangChange(e, isFromEnglish);
 
-            UserParams user = sql.GetUserInList(users, e.Message.From.Id);
+            UserParams user = SQLiter.GetUserInList(users, e.Message.From.Id);
             if (user == null)
             {
                 user = sql.GetUserInDB(e.Message.From.Id);
@@ -156,7 +163,7 @@ namespace TGBotCSharp
             }
             else
             {
-                sql.ReplaceUserInList
+                SQLiter.ReplaceUserInList
                 (
                     users,
                     e.Message.From.Id,

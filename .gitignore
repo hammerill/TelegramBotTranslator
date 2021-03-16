@@ -1,2 +1,5 @@
 botsettings.json
 userparams.db
+bin
+log.txt
+dev_log.txt

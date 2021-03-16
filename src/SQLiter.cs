@@ -8,13 +8,11 @@ namespace TGBotCSharp
     class SQLiter
     {
         public string Filename { get; set; }
-        public bool Debug { get; set; }
         public SQLiteConnection Connection;
 
-        public SQLiter(string filename, bool debug = false)
+        public SQLiter(string filename)
         {
             Filename = filename;
-            Debug = debug;
 
             if (!File.Exists(Filename))
             {
@@ -61,13 +59,13 @@ namespace TGBotCSharp
                 }
                 catch (Exception e)
                 {
-                    if (Debug) { Logger.Err(1, userId, e.Message); }
+                    Logger.Err(1, userId, e.Message);
                     return null;
                 }
                 toReturn = new UserParams() { UserId = userId, IsFromEnglish = isFromEnglish };
             }
 
-            if (Debug) { Logger.FoundUser(userId, true); }
+            Logger.FoundUser(userId, true);
 
             return toReturn;
         }
@@ -77,15 +75,15 @@ namespace TGBotCSharp
             SQLiteCommand command = Connection.CreateCommand();
             bool isAdding = !IsUserExistsInDB(userId);
 
-            if (Debug) { Logger.AddUpdateUser(userId, isFromEnglish, isAdding); }
+            Logger.AddUpdateUser(userId, isFromEnglish, isAdding);
 
             if (isAdding)
             {
-                command.CommandText = "UPDATE Languages SET isFromEnglish = $isFromEnglish WHERE userId = $userId";
+                command.CommandText = "INSERT INTO Languages VALUES ($userId, $isFromEnglish)";
             }
             else
             {
-                command.CommandText = "INSERT INTO Languages VALUES ($userId, $isFromEnglish)";
+                command.CommandText = "UPDATE Languages SET isFromEnglish = $isFromEnglish WHERE userId = $userId";
             }
 
             command.Parameters.AddWithValue("$userId", userId);
@@ -131,27 +129,31 @@ namespace TGBotCSharp
             return toReturn;
         }
 
-        public UserParams GetUserInList(List<UserParams> ups, int id)
+        static public UserParams GetUserInList(List<UserParams> ups, int id)
         {
-            foreach (var item in ups)
+            try
             {
-                if (item.UserId == id)
+                foreach (var item in ups)
                 {
-                    if (Debug) { Logger.FoundUser(id, false); }
-                    return item;
+                    if (item.UserId == id)
+                    {
+                        Logger.FoundUser(id, false);
+                        return item;
+                    }
                 }
             }
+            catch (Exception) {}
 
-            if (Debug) { Logger.Err(3, id); }
+            Logger.Err(3, id);
             return null;
         }
-        public void ReplaceUserInList(List<UserParams> ups, int id, UserParams up)
+        static public void ReplaceUserInList(List<UserParams> ups, int id, UserParams up)
         {
             for (int i = 0; i < ups.Count; i++)
             {
                 if (ups[i].UserId == id)
                 {
-                    if (Debug) { Logger.Replacing(id, up.IsFromEnglish); }
+                    Logger.Replacing(id, up.IsFromEnglish);
                     ups[i] = up;
                     return;
                 }

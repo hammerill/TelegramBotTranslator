@@ -1,4 +1,7 @@
 ﻿{
-  "tokenString": "INSERT YOUR BOT TOKEN HERE",
-  "debugLog": false
+  "tokenString":        "PLEASE INSERT YOUR TOKEN HERE",
+  "errorStickerId":     "CAACAgIAAxkBAAECEPFgUOy_7avsqFhtg7YPY8iBDKaG0wACDAsAAlLsiEp7FqGPN4gU5R4E",
+  "logFileLocation":    "..\\..\\..\\log.txt",
+  "devLogFileLocation": "..\\..\\..\\dev_log.txt",
+  "dbLocation":         "..\\..\\..\\userparams.db"
 }

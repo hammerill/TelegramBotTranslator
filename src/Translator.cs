@@ -4,7 +4,7 @@ namespace TGBotCSharp
 {
     static class Translator
     {
-        static public string Translate(string toTranslate, bool fromEnglish = true, bool debug = false)
+        static public string Translate(string toTranslate, bool fromEnglish = true)
         {
             string text = HttpUtility.UrlEncode(toTranslate);
             string urlEnglish = string.Format($"https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q={text}");
@@ -12,9 +12,9 @@ namespace TGBotCSharp
 
             string url = fromEnglish ? urlEnglish : urlRussian;
 
-            if (debug) { Logger.Requesting(url); }
+            Logger.Requesting(url);
             string result = Requester.Request(url);
-            if (debug) { Logger.GotResponse(result); }
+            Logger.GotResponse(result);
 
             try
             {
@@ -24,7 +24,7 @@ namespace TGBotCSharp
             catch
             {
                 Logger.Err();
-                return "Error";
+                return null;
             }
         }
     }
