@@ -76,7 +76,7 @@ namespace TGBotCSharp
         }
         static public void Started()
         {
-            Log($"Awaiting messages, press any key to stop.\n", false);
+            Log($"Bot started.\n", false);
         }
         static public void LangChange(MessageEventArgs e, bool isFromEnglish)
         {
