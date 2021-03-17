@@ -59,6 +59,9 @@ namespace TGBotCSharp
                 case 3:
                     Log($"Cannot find user {userId} in UserParams list, returning null.", true);
                     break;
+                case 4:
+                    Log($"\"{info}\" is a unknown command, sending error sticker.", false);
+                    break;
                 default:
                     break;
             }
