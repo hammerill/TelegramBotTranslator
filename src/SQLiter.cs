@@ -7,21 +7,18 @@ namespace TGBotCSharp
 {
     class SQLiter
     {
-        public string Filename { get; set; }
-        public SQLiteConnection Connection;
+        private readonly SQLiteConnection Connection;
 
         public SQLiter(string filename)
         {
-            Filename = filename;
-
-            if (!File.Exists(Filename))
+            if (!File.Exists(filename))
             {
-                SQLiteConnection.CreateFile(Filename);
+                SQLiteConnection.CreateFile(filename);
             }
 
             Connection = new SQLiteConnection
             {
-                ConnectionString = $"Data Source = {Filename}"
+                ConnectionString = $"Data Source = {filename}"
             };
             Connection.Open();
 
