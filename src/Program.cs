@@ -51,7 +51,7 @@ namespace TGBotCSharp
             return 0;
         }
 
-        static async void GotMessage(object sender, MessageEventArgs e)
+        static async void GotMessage(object sender, MessageEventArgs m)
         {
             string fromEnglish = "С английского на русский", fromRussian = "С русского на английский";
             ReplyKeyboardMarkup rkm = new()
@@ -69,76 +69,76 @@ namespace TGBotCSharp
                 }
             };
 
-            if (e.Message.Text != "/start" && e.Message.Text != fromRussian && e.Message.Text != fromEnglish)
+            if (m.Message.Text != "/start" && m.Message.Text != fromRussian && m.Message.Text != fromEnglish)
             {
-                Logger.Got(e);
+                Logger.Got(m);
 
-                UserParams user = SQLiter.GetUserInList(users, e.Message.From.Id);
+                UserParams user = SQLiter.GetUserInList(users, m.Message.From.Id);
                 if (user == null)
                 {
-                    user = sql.GetUserInDB(e.Message.From.Id);
+                    user = sql.GetUserInDB(m.Message.From.Id);
                     if (user == null)
                     {
-                        sql.AddUpdateUserInDB(e.Message.From.Id, true);
-                        user = sql.GetUserInDB(e.Message.From.Id);
+                        sql.AddUpdateUserInDB(m.Message.From.Id, true);
+                        user = sql.GetUserInDB(m.Message.From.Id);
                         users.Add(user);
                     }
                 }
 
-                string Translated = Translator.Translate(e.Message.Text, user.IsFromEnglish);
+                string Translated = Translator.Translate(m.Message.Text, user.IsFromEnglish);
                 if (Translated == null)
                 {
-                    await bot.SendStickerAsync(e.Message.Chat, bs.ErrorStickerId);
-                    Logger.Sent(e, "{Error sticker}");
+                    await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
+                    Logger.Sent(m, "{Error sticker}");
                 }
                 else
                 {
-                    await bot.SendTextMessageAsync(e.Message.Chat, Translated);
-                    Logger.Sent(e, Translated);
+                    await bot.SendTextMessageAsync(m.Message.Chat, Translated);
+                    Logger.Sent(m, Translated);
                 }
 
             }
-            else if (e.Message.Text == fromRussian || e.Message.Text == fromEnglish)
+            else if (m.Message.Text == fromRussian || m.Message.Text == fromEnglish)
             {
-                if (e.Message.Text == fromRussian)
+                if (m.Message.Text == fromRussian)
                 {
-                    ChangeLang(e, false);
+                    ChangeLang(m, false);
 
                     string MsgText = "Готово! Теперь бот переводит русский текст в английский.";
-                    await bot.SendTextMessageAsync(e.Message.Chat, MsgText);
+                    await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
 
-                    Logger.Sent(e, MsgText);
+                    Logger.Sent(m, MsgText);
                 }
                 else
                 {
-                    ChangeLang(e, true);
+                    ChangeLang(m, true);
 
                     string MsgText = "Готово! Теперь бот переводит английский текст в русский.";
-                    await bot.SendTextMessageAsync(e.Message.Chat, MsgText);
+                    await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
 
-                    Logger.Sent(e, MsgText);
+                    Logger.Sent(m, MsgText);
                 }
             }
             else
             {
-                Logger.Got(e);
+                Logger.Got(m);
 
-                UserParams user = SQLiter.GetUserInList(users, e.Message.From.Id);
+                UserParams user = SQLiter.GetUserInList(users, m.Message.From.Id);
                 if (user == null)
                 {
-                    user = sql.GetUserInDB(e.Message.From.Id);
+                    user = sql.GetUserInDB(m.Message.From.Id);
                     if (user == null)
                     {
-                        sql.AddUpdateUserInDB(e.Message.From.Id, true);
-                        user = sql.GetUserInDB(e.Message.From.Id);
+                        sql.AddUpdateUserInDB(m.Message.From.Id, true);
+                        user = sql.GetUserInDB(m.Message.From.Id);
                         users.Add(user);
                     }
                 }
 
                 string MsgText = "Выберите язык и бот будет переводить введённый вами текст.";
-                await bot.SendTextMessageAsync(e.Message.Chat, MsgText, replyMarkup: rkm);
+                await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: rkm);
 
-                Logger.Sent(e, "{Start message}");
+                Logger.Sent(m, "{Start message}");
             }
         }
 
