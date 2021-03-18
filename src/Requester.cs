@@ -1,11 +1,6 @@
 ﻿using System.IO;
 using System.Net;
 using System.Text;
-<<<<<<< HEAD
-=======
-using Telegram.Bot;
-using Telegram.Bot.Args;
->>>>>>> 425a1fe8a763399573a3c2be4e12826abbd3a692
 using Telegram.Bot.Types;
 
 namespace TGBotCSharp
