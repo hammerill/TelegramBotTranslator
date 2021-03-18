@@ -18,7 +18,7 @@ namespace TGBotCSharp
         }
 
         //Example using: Requester.CopyMessage(m.Message, {int:id to send}, bs.TokenString);
-        static public void CopyMessage(Message m, int chatId, string token)
+        static public void CopyMessage(Message msg, int chatId, string token)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create($"https://api.telegram.org/bot{token}/copyMessage");
             req.ContentType = "application/json";
@@ -26,8 +26,8 @@ namespace TGBotCSharp
 
             using (StreamWriter sw = new(req.GetRequestStream()))
             {
-                var from_chat_id = m.From.Id;
-                var message_id = m.MessageId;
+                var from_chat_id = msg.From.Id;
+                var message_id = msg.MessageId;
 
                 string json = $"{{\"chat_id\": {chatId}, \"from_chat_id\": {from_chat_id}, \"message_id\": {message_id}}}";
                 sw.Write(json);
