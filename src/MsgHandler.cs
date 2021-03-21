@@ -40,7 +40,7 @@ namespace TGBotCSharp
                 {
                     GetUser(m.Message.From.Id);
 
-                    string MsgText = "Выберите язык и бот будет переводить введённый вами текст.";
+                    string MsgText = "Выберите язык и бот будет переводить введённый вами текст";
                     await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: rkm);
 
                     Logger.Sent(m, "{Start message}");
@@ -75,7 +75,7 @@ namespace TGBotCSharp
             {
                 ChangeLang(m, false);
 
-                string MsgText = "Готово! Теперь бот переводит русский текст в английский.";
+                string MsgText = "Готово! Теперь бот переводит русский текст в английский";
                 await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
 
                 Logger.Sent(m, MsgText);
@@ -84,7 +84,7 @@ namespace TGBotCSharp
             {
                 ChangeLang(m, true);
 
-                string MsgText = "Готово! Теперь бот переводит английский текст в русский.";
+                string MsgText = "Готово! Теперь бот переводит английский текст в русский";
                 await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
 
                 Logger.Sent(m, MsgText);
