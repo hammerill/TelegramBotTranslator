@@ -105,6 +105,11 @@ namespace TGBotCSharp
             return tc.Users.ToList();
         }
 
+        public List<Lang> GetAllLangs()
+        {
+            return tc.Langs.ToList();
+        }
+
         static public User GetUserInList(List<User> users, int id)
         {
             try
@@ -135,6 +140,14 @@ namespace TGBotCSharp
                 }
             }
             throw new ArgumentException("Cannot find a user with given id."); //This method doesn't calls where user with given id doesn't exists
+        }
+
+        public void UpdateUserState(User user, int state = 0, bool isSrcLangChanges = true)
+        {
+            Logger.UpdateUserState(user, state);
+            user.State              = state;
+            user.IsSrcLangChanges   = isSrcLangChanges ? 1 : 0;
+            tc.SaveChanges();
         }
 
         public void LoadLangs()

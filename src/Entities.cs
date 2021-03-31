@@ -65,6 +65,11 @@ namespace TGBotCSharp
         [Required]
         [ForeignKey("ToLangId")]
         public Lang ToLang { get; set; }
+
+        [Required]
+        public int State { get; set; }
+        [Required]
+        public int IsSrcLangChanges { get; set; }
     }
     public class Lang
     {

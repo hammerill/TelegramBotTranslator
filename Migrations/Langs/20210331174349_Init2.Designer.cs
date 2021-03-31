@@ -8,7 +8,7 @@ using TGBotCSharp;
 namespace TGBotCSharp.Migrations.Langs
 {
     [DbContext(typeof(LangsContext))]
-    [Migration("20210330235802_Init2")]
+    [Migration("20210331174349_Init2")]
     partial class Init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

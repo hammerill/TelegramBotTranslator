@@ -35,6 +35,27 @@ namespace TGBotCSharp
         {
             Log($"Bot to {e.Message.From.Id}:{e.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
         }
+        static public void Menu(MessageEventArgs e, int menuButton, User user = null)
+        {
+            switch (menuButton)
+            {
+                case 0:
+                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting SrcLang change.", false);
+                    break;
+                case 1:
+                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting ToLang change.", false);
+                    break;
+                case 2:
+                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting status.", false);
+                    break;
+                case 3:
+                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting all langs.", false);
+                    break;
+                case 4:
+                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching langs ({user.SrcLang.LangCode} and {user.ToLang.LangCode}).", false);
+                    break;
+            }
+        }
         static public void Requesting(string url)
         {
             Log($"Sending request to {{\n{url}\n}}.", true);
@@ -106,6 +127,18 @@ namespace TGBotCSharp
         static public void Replacing(int userId, User user)
         {
             Log($"Replacing {userId} in Users list with new element with parameters SrcLang = \"{user.SrcLang.LangCode}\", ToLang = \"{user.ToLang.LangCode}\".", true);
+        }
+        static public void UpdateUserState(User user, int state)
+        {
+            Log($"Updating state at user {user.Id} from {user.State} to {state}.", true);
+        }
+        static public void UnknownState(int state)
+        {
+            Log($"\"{state}\" is unknown user state, sending error sticker and resetting to \"0\".", true);
+        }
+        static public void WrongText(MessageEventArgs m)
+        {
+            Log($"\"{m.Message.Text}\" is wrong text at this state, sending error sticker.", true);
         }
     }
 }

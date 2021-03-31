@@ -39,7 +39,13 @@ namespace TGBotCSharp.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("IsSrcLangChanges")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("SrcLangId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("State")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ToLangId")

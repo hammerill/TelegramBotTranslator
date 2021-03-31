@@ -26,7 +26,9 @@ namespace TGBotCSharp.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
                     SrcLangId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ToLangId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ToLangId = table.Column<int>(type: "INTEGER", nullable: false),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsSrcLangChanges = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
