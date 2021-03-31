@@ -134,11 +134,11 @@ namespace TGBotCSharp
         }
         static public void UnknownState(int state)
         {
-            Log($"\"{state}\" is unknown user state, sending error sticker and resetting to \"0\".", true);
+            Log($"\"{state}\" is unknown user state, sending error sticker and resetting to \"0\".", false);
         }
         static public void WrongText(MessageEventArgs m)
         {
-            Log($"\"{m.Message.Text}\" is wrong text at this state, sending error sticker.", true);
+            Log($"\"{m.Message.Text}\" is wrong text at this state, sending error sticker.", false);
         }
     }
 }
