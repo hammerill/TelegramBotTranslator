@@ -112,52 +112,28 @@ namespace TGBotCSharp
             return user;
         }
 
-        static void ChangeLang(MessageEventArgs e, bool isSrcLangChanges, Lang toChange)
+        static void ChangeLang(MessageEventArgs m, bool isSrcLangChanges, Lang toChange)
         {
-            Logger.LangChange(e, isSrcLangChanges, toChange.FriendlyTitle);
+            Logger.ChangeLang(m, isSrcLangChanges, toChange.FriendlyTitle);
 
-            User user = DatabaseController.GetUserInList(users, e.Message.From.Id);
-            if (user == null)
+            User user = GetUser(m.Message.From.Id);
+
+            if (isSrcLangChanges)
             {
-                user = dc.GetUserInDB(e.Message.From.Id);
-                if (user == null)
-                {
-                    throw new System.ArgumentException("Cannot find a user with given id, method can't handle this.");
-                }
-                else
-                {
-                    if (isSrcLangChanges)
-                    {
-                        user.SrcLang = toChange;
-                    }
-                    else
-                    {
-                        user.ToLang = toChange;
-                    }
-
-                    dc.AddUpdateUserInDB(user);
-                }
+                user.SrcLang = toChange;
             }
             else
             {
-                if (isSrcLangChanges)
-                {
-                    user.SrcLang = toChange;
-                }
-                else
-                {
-                    user.ToLang = toChange;
-                }
-
-                DatabaseController.ReplaceUserInList
-                (
-                    users,
-                    e.Message.From.Id,
-                    user
-                );
-
-                dc.AddUpdateUserInDB(user);
+                user.ToLang = toChange;
             }
+            dc.AddUpdateUserInDB(user);
+
+            DatabaseController.ReplaceUserInList
+            (
+                users,
+                m.Message.From.Id,
+                user
+            );
         }
     }
 }

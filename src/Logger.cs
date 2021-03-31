@@ -81,7 +81,7 @@ namespace TGBotCSharp
         {
             Log($"Bot \"{name}\" started.\n", false);
         }
-        static public void LangChange(MessageEventArgs e, bool isSrcLangChanges, string langName)
+        static public void ChangeLang(MessageEventArgs e, bool isSrcLangChanges, string langName)
         {
             if (isSrcLangChanges)
             {
