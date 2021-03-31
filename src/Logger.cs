@@ -57,7 +57,7 @@ namespace TGBotCSharp
                     Log($"Cannot find user {userId} in database, returning null.", true);
                     break;
                 case 3:
-                    Log($"Cannot find user {userId} in UserParams list, returning null.", true);
+                    Log($"Cannot find user {userId} in Users list, returning null.", true);
                     break;
                 case 4:
                     Log($"\"{info}\" is a unknown command, sending error sticker.", false);
@@ -66,30 +66,30 @@ namespace TGBotCSharp
                     break;
             }
         }
-        static public void AddUpdateUser(int userId, bool isFromEnglish, bool isAdding)
+        static public void AddUpdateUser(User user, bool isAdding)
         {
             if (isAdding)
             {
-                Log($"{userId} is a new user, adding him to DB with parameter isFromEnglish = {isFromEnglish}...", true);
+                Log($"{user.Id} is a new user, adding him to DB with parameters SrcLang = \"{user.SrcLang.LangCode}\", ToLang = \"{user.ToLang.LangCode}\".", true);
             }
             else
             {
-                Log($"{userId} is a existing user, updating isFromEnglish to {isFromEnglish} at the DB...", true);
+                Log($"{user.Id} is a existing user, updating him at the DB with parameters SrcLang = \"{user.SrcLang.LangCode}\", ToLang = \"{user.ToLang.LangCode}\".", true);
             }
         }
-        static public void Started()
+        static public void Started(string name)
         {
-            Log($"Bot started.\n", false);
+            Log($"Bot \"{name}\" started.\n", false);
         }
-        static public void LangChange(MessageEventArgs e, bool isFromEnglish)
+        static public void LangChange(MessageEventArgs e, bool isSrcLangChanges, string langName)
         {
-            if (isFromEnglish)
+            if (isSrcLangChanges)
             {
-                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching language to \"English\" -> \"Russian\".", false);
+                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching source language to \"{langName}\".", false);
             }
             else
             {
-                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching language to \"Russian\" -> \"English\".", false);
+                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching destination language to \"{langName}\".", false);
             }
         }
         static public void FoundUser(int userId, bool isFromDb)
@@ -100,12 +100,12 @@ namespace TGBotCSharp
             }
             else
             {
-                Log($"Found a {userId} in UserParams list.", true);
+                Log($"Found a {userId} in Users list.", true);
             }
         }
-        static public void Replacing(int userId, bool isFromEnglish)
+        static public void Replacing(int userId, User user)
         {
-            Log($"Replacing {userId} in UserParams list with new element, where isFromEnglish = {isFromEnglish}.", true);
+            Log($"Replacing {userId} in Users list with new element with parameters SrcLang = \"{user.SrcLang.LangCode}\", ToLang = \"{user.ToLang.LangCode}\".", true);
         }
     }
 }

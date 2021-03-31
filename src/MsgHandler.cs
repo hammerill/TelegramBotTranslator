@@ -8,26 +8,28 @@ namespace TGBotCSharp
     static class MsgHandler
     {
         static public ITelegramBotClient bot;
-        static public SQLiter sql;
-        static public List<UserParams> users;
+        static public DatabaseController dc;
+        static public List<User> users;
         static public BotSettings bs;
 
-        static public async void GotMessage(object sender, MessageEventArgs m)
+        static public async void HandleMessage(object sender, MessageEventArgs m)
         {
-            string fromEnglish = "С английского на русский", fromRussian = "С русского на английский";
+            List<string> buttons = new()
+            {
+                "С русского на английский",
+                "С английского на русский"
+            };
+
+            List<List<KeyboardButton>> kbs = new();
+
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                kbs.Add(new List<KeyboardButton>() { new KeyboardButton(buttons[i]) });
+            }
+
             ReplyKeyboardMarkup rkm = new()
             {
-                Keyboard = new[]
-                {
-                    new[]
-                    {
-                        new KeyboardButton(fromEnglish)
-                    },
-                    new[]
-                    {
-                        new KeyboardButton(fromRussian)
-                    }
-                }
+                Keyboard = kbs
             };
 
             var command = CmdHandler.GetCommand(m);
@@ -52,13 +54,13 @@ namespace TGBotCSharp
                     Logger.Sent(m, "{Error sticker}");
                 }
             }
-            else if (m.Message.Text != fromRussian && m.Message.Text != fromEnglish)
+            else if (!buttons.Exists(a => a == m.Message.Text))
             {
                 Logger.Got(m);
 
-                UserParams user = GetUser(m.Message.From.Id);
+                User user = GetUser(m.Message.From.Id);
 
-                string Translated = Translator.Translate(m.Message.Text, user.IsFromEnglish);
+                string Translated = Translator.Translate(m.Message.Text, user);
                 if (Translated == null)
                 {
                     await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
@@ -71,9 +73,10 @@ namespace TGBotCSharp
                 }
 
             }
-            else if (m.Message.Text == fromRussian)
+            else if (m.Message.Text == buttons[0])
             {
-                ChangeLang(m, false);
+                ChangeLang(m, true, dc.GetLangByCode("ru"));
+                ChangeLang(m, false, dc.GetLangByCode("en"));
 
                 string MsgText = "Готово! Теперь бот переводит русский текст в английский";
                 await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
@@ -82,7 +85,8 @@ namespace TGBotCSharp
             }
             else
             {
-                ChangeLang(m, true);
+                ChangeLang(m, true, dc.GetLangByCode("en"));
+                ChangeLang(m, false, dc.GetLangByCode("ru"));
 
                 string MsgText = "Готово! Теперь бот переводит английский текст в русский";
                 await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
@@ -91,16 +95,16 @@ namespace TGBotCSharp
             }
         }
 
-        static UserParams GetUser(int id)
+        static User GetUser(int id)
         {
-            UserParams user = SQLiter.GetUserInList(users, id);
+            User user = DatabaseController.GetUserInList(users, id);
             if (user == null)
             {
-                user = sql.GetUserInDB(id);
+                user = dc.GetUserInDB(id);
                 if (user == null)
                 {
-                    sql.AddUpdateUserInDB(id, true);
-                    user = sql.GetUserInDB(id);
+                    dc.AddUpdateUserInDB(new User() { Id = id, SrcLang = dc.GetLangByCode("en"), ToLang = dc.GetLangByCode("ru") });
+                    user = dc.GetUserInDB(id);
                     users.Add(user);
                 }
             }
@@ -108,38 +112,51 @@ namespace TGBotCSharp
             return user;
         }
 
-        static void ChangeLang(MessageEventArgs e, bool isFromEnglish)
+        static void ChangeLang(MessageEventArgs e, bool isSrcLangChanges, Lang toChange)
         {
-            Logger.LangChange(e, isFromEnglish);
+            Logger.LangChange(e, isSrcLangChanges, toChange.FriendlyTitle);
 
-            UserParams user = SQLiter.GetUserInList(users, e.Message.From.Id);
+            User user = DatabaseController.GetUserInList(users, e.Message.From.Id);
             if (user == null)
             {
-                user = sql.GetUserInDB(e.Message.From.Id);
+                user = dc.GetUserInDB(e.Message.From.Id);
                 if (user == null)
                 {
-                    sql.AddUpdateUserInDB(e.Message.From.Id, isFromEnglish);
-                    user = sql.GetUserInDB(e.Message.From.Id);
-                    users.Add(user);
+                    throw new System.ArgumentException("Cannot find a user with given id, method can't handle this.");
                 }
                 else
                 {
-                    sql.AddUpdateUserInDB(e.Message.From.Id, isFromEnglish);
+                    if (isSrcLangChanges)
+                    {
+                        user.SrcLang = toChange;
+                    }
+                    else
+                    {
+                        user.ToLang = toChange;
+                    }
+
+                    dc.AddUpdateUserInDB(user);
                 }
             }
             else
             {
-                SQLiter.ReplaceUserInList
+                if (isSrcLangChanges)
+                {
+                    user.SrcLang = toChange;
+                }
+                else
+                {
+                    user.ToLang = toChange;
+                }
+
+                DatabaseController.ReplaceUserInList
                 (
                     users,
                     e.Message.From.Id,
-                    new UserParams()
-                    {
-                        UserId = e.Message.From.Id,
-                        IsFromEnglish = isFromEnglish
-                    }
+                    user
                 );
-                sql.AddUpdateUserInDB(e.Message.From.Id, isFromEnglish);
+
+                dc.AddUpdateUserInDB(user);
             }
         }
     }

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Telegram.Bot;
-using Telegram.Bot.Args;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TGBotCSharp
 {
     class Program
     {
         static ITelegramBotClient bot;
-        static SQLiter sql;
-        static List<UserParams> users;
+        static DatabaseController dc;
+        static List<User> users;
         static BotSettings bs;
 
         static int Main()
@@ -25,32 +23,37 @@ namespace TGBotCSharp
                 return -1;
             }
 
-            Logger.LogFileLocation = bs.LogFileLocation;
-            Logger.DevLogFileLocation = bs.DevLogFileLocation;
+            Logger.LogFileLocation      = bs.LogFileLocation;
+            Logger.DevLogFileLocation   = bs.DevLogFileLocation;
 
-            sql = new(bs.DBLocation);
-            users = sql.GetAllUsers();
-
+            dc = new(bs.DBLocation, bs.LangsDBLocation);
+            users = dc.GetAllUsers();
+            foreach (User user in users) //I unsuccesfully tried to fix bug with entity objects normally, so I just wrote that s**tcode to get bot work
+            {
+                user.SrcLang = dc.GetLangById(user.SrcLangId);
+                user.ToLang = dc.GetLangById(user.ToLangId);
+            }
 
             try
             {
                 bot = new TelegramBotClient(bs.TokenString);
+                var botMe = bot.GetMeAsync().Result;
+                Logger.Started(botMe.FirstName);
             }
-            catch (ArgumentException e)
+            catch
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Failed to initialize bot.\nMaybe you inserted an invalid token?\nAlso check your internet connection.");
                 return -1;
             }
 
-            MsgHandler.bot = bot;
-            MsgHandler.sql = sql;
-            MsgHandler.users = users;
-            MsgHandler.bs = bs;
+            MsgHandler.bot      = bot;
+            MsgHandler.dc       = dc;
+            MsgHandler.users    = users;
+            MsgHandler.bs       = bs;
 
-            bot.OnMessage += MsgHandler.GotMessage;
+            bot.OnMessage += MsgHandler.HandleMessage;
             bot.StartReceiving();
 
-            Logger.Started();
             Console.ReadKey();
 
             bot.StopReceiving();
