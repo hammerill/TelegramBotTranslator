@@ -16,7 +16,7 @@ namespace TGBotCSharp
         {
             "Сменить исходный язык",
             "Сменить выводимый язык",
-            "Поменять местами",
+            "Поменять языки местами",
             "Переключить обратный перевод",
             "Просмотреть текущие настройки"
         };
@@ -153,11 +153,11 @@ namespace TGBotCSharp
                         string msgText;
                         if (user.ReverseMode == 1)
                         {
-                            msgText = $"Вашем исходным языком является {user.SrcLang.FriendlyTitle}\nВашем выводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода включен";
+                            msgText = $"Исходным языком является {user.SrcLang.FriendlyTitle}\nВыводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода включен";
                         }
                         else
                         {
-                            msgText = $"Вашем исходным языком является {user.SrcLang.FriendlyTitle}\nВашем выводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода выключен";
+                            msgText = $"Исходным языком является {user.SrcLang.FriendlyTitle}\nВыводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода выключен";
                         }
 
                         await bot.SendTextMessageAsync(m.Message.Chat, msgText);
