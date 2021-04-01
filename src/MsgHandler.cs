@@ -17,6 +17,7 @@ namespace TGBotCSharp
             "Сменить исходный язык",
             "Сменить выводимый язык",
             "Поменять местами",
+            "Переключить обратный перевод",
             "Просмотреть текущие настройки"
         };
         static private readonly List<string> usualLangs = new()
@@ -37,7 +38,7 @@ namespace TGBotCSharp
             {
                 case 0: //main state
                     var command = CmdHandler.GetCommand(m);
-                    if (command != null)
+                    if (command != null) //Command handled
                     {
                         Logger.Got(m);
 
@@ -46,8 +47,8 @@ namespace TGBotCSharp
                         {
                             ReplyKeyboardMarkup rkm = GetRkm(mainMenu);
 
-                            string MsgText = "Выберите язык и бот будет переводить введённый вами текст";
-                            await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: rkm);
+                            string msgText = "Выберите язык и бот будет переводить введённый вами текст";
+                            await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: rkm);
 
                             Logger.Sent(m, "{Start message}");
                         }
@@ -58,20 +59,30 @@ namespace TGBotCSharp
                             Logger.Sent(m, "{Error sticker}");
                         }
                     }
-                    else if (!mainMenu.Exists(a => a == m.Message.Text))
+                    else if (!mainMenu.Exists(a => a == m.Message.Text)) //Text translating
                     {
                         Logger.Got(m);
 
-                        string Translated = Translator.Translate(m.Message.Text, user);
-                        if (Translated == null)
+                        string translated;
+                        if (user.ReverseMode == 1)
                         {
-                            await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
-                            Logger.Sent(m, "{Error sticker}");
+                            translated = Translator.Translate(m.Message.Text, user);
+                            translated = Translator.Translate(translated, user, true);
                         }
                         else
                         {
-                            await bot.SendTextMessageAsync(m.Message.Chat, Translated);
-                            Logger.Sent(m, Translated);
+                            translated = Translator.Translate(m.Message.Text, user);
+                        }
+
+                        if (translated != null)
+                        {
+                            await bot.SendTextMessageAsync(m.Message.Chat, translated);
+                            Logger.Sent(m, translated);
+                        }
+                        else
+                        {
+                            await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
+                            Logger.Sent(m, "{Error sticker}");
                         }
 
                     }
@@ -115,14 +126,42 @@ namespace TGBotCSharp
                         await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
                         Logger.Sent(m, MsgText);
                     }
+                    else if (m.Message.Text == mainMenu[3]) //Reverse mode switching
+                    {
+                        Logger.Menu(m, 5, user);
+
+                        string msgText;
+
+                        if (user.ReverseMode == 1)
+                        {
+                            msgText = "Вы выключили режим обратного перевода";
+                            dc.UpdateReverseMode(user, false);
+                        }
+                        else
+                        {
+                            msgText = "Вы включили режим обратного перевода";
+                            dc.UpdateReverseMode(user, true);
+                        }
+
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText);
+                        Logger.Sent(m, msgText);
+                    }
                     else //Get status
                     {
                         Logger.Menu(m, 2);
 
-                        string MsgText = $"Вашем исходным языком является {user.SrcLang.FriendlyTitle}\nВашем выводимым языком является {user.ToLang.FriendlyTitle}";
+                        string msgText;
+                        if (user.ReverseMode == 1)
+                        {
+                            msgText = $"Вашем исходным языком является {user.SrcLang.FriendlyTitle}\nВашем выводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода включен";
+                        }
+                        else
+                        {
+                            msgText = $"Вашем исходным языком является {user.SrcLang.FriendlyTitle}\nВашем выводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода выключен";
+                        }
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
-                        Logger.Sent(m, $"{{SrcLang: \"{user.SrcLang.LangCode}\", ToLang: \"{user.ToLang.LangCode}\"}}");
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText);
+                        Logger.Sent(m, $"{{SrcLang: \"{user.SrcLang.LangCode}\", ToLang: \"{user.ToLang.LangCode}\", RevMode: {user.ReverseMode}}}");
                     }
                     break;
                 case 1: //usual langs changing
@@ -270,7 +309,8 @@ namespace TGBotCSharp
                             SrcLang = dc.GetLangByCode("en"),
                             ToLang = dc.GetLangByCode("ru"),
                             State = 0 ,
-                            IsSrcLangChanges = 1
+                            IsSrcLangChanges = 1,
+                            ReverseMode = 0
                         });
                     user = dc.GetUserInDB(id);
                     users.Add(user);

@@ -54,6 +54,9 @@ namespace TGBotCSharp
                 case 4:
                     Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching langs ({user.SrcLang.LangCode} and {user.ToLang.LangCode}).", false);
                     break;
+                case 5:
+                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching reverse mode (from {user.ReverseMode}).", false);
+                    break;
             }
         }
         static public void Requesting(string url)
@@ -131,6 +134,10 @@ namespace TGBotCSharp
         static public void UpdateUserState(User user, int state)
         {
             Log($"Updating state at user {user.Id} from {user.State} to {state}.", true);
+        }
+        static public void UpdateReverseMode(User user, bool isEnablingReverseMode = false)
+        {
+            Log($"Updating reverse mode at user {user.Id} from {user.ReverseMode == 1} to {isEnablingReverseMode}.", true);
         }
         static public void UnknownState(int state)
         {

@@ -70,6 +70,8 @@ namespace TGBotCSharp
         public int State { get; set; }
         [Required]
         public int IsSrcLangChanges { get; set; }
+        [Required]
+        public int ReverseMode { get; set; }
     }
     public class Lang
     {

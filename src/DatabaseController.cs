@@ -145,8 +145,14 @@ namespace TGBotCSharp
         public void UpdateUserState(User user, int state = 0, bool isSrcLangChanges = true)
         {
             Logger.UpdateUserState(user, state);
-            user.State              = state;
-            user.IsSrcLangChanges   = isSrcLangChanges ? 1 : 0;
+            user.State = state;
+            user.IsSrcLangChanges = isSrcLangChanges ? 1 : 0;
+            tc.SaveChanges();
+        }
+        public void UpdateReverseMode(User user, bool isEnablingReverseMode = false)
+        {
+            Logger.UpdateReverseMode(user, isEnablingReverseMode);
+            user.ReverseMode = isEnablingReverseMode ? 1 : 0;
             tc.SaveChanges();
         }
 
