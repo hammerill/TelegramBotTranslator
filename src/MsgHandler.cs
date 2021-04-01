@@ -45,10 +45,8 @@ namespace TGBotCSharp
                         string cmdText = CmdHandler.GetEntityText(command, m);
                         if (cmdText == "/start")
                         {
-                            ReplyKeyboardMarkup rkm = GetRkm(mainMenu);
-
                             string msgText = "Выберите язык и бот будет переводить введённый вами текст";
-                            await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: rkm);
+                            await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu));
 
                             Logger.Sent(m, "{Start message}");
                         }
@@ -92,11 +90,9 @@ namespace TGBotCSharp
 
                         string MsgText = "Выберите исходный язык";
 
-                        ReplyKeyboardMarkup rkm = GetRkm(usualLangs);
-
                         dc.UpdateUserState(user, 1, true); //setting state to usual SrcLang changing
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: rkm);
+                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: GetRkm(usualLangs));
                         Logger.Sent(m, MsgText);
                     }
                     else if (m.Message.Text == mainMenu[1]) //ToLang change
@@ -105,11 +101,9 @@ namespace TGBotCSharp
 
                         string MsgText = "Выберите выводимый язык";
 
-                        ReplyKeyboardMarkup rkm = GetRkm(usualLangs);
-
                         dc.UpdateUserState(user, 1, false); //setting state to usual ToLang changing
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: rkm);
+                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: GetRkm(usualLangs));
                         Logger.Sent(m, MsgText);
                     }
                     else if (m.Message.Text == mainMenu[2]) //Langs switching
@@ -118,13 +112,13 @@ namespace TGBotCSharp
 
                         Lang OldSrc = user.SrcLang, OldTo = user.ToLang;
 
-                        string MsgText = $"Вы поменяли местами {OldSrc.FriendlyTitle} и {OldTo.FriendlyTitle} языки";
+                        string msgText = $"Вы поменяли местами {OldSrc.FriendlyTitle} и {OldTo.FriendlyTitle} языки";
 
                         ChangeLang(m, true, OldTo);
                         ChangeLang(m, false, OldSrc);
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText);
-                        Logger.Sent(m, MsgText);
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText);
+                        Logger.Sent(m, msgText);
                     }
                     else if (m.Message.Text == mainMenu[3]) //Reverse mode switching
                     {
@@ -202,11 +196,9 @@ namespace TGBotCSharp
                                     }
                                 }
 
-                                ReplyKeyboardMarkup rkm = GetRkm(allLangs);
-
                                 dc.UpdateUserState(user, 2, user.IsSrcLangChanges == 1); //setting state to all langs changing
 
-                                await bot.SendTextMessageAsync(m.Message.Chat, "Выберите между всеми языками", replyMarkup: rkm);
+                                await bot.SendTextMessageAsync(m.Message.Chat, "Выберите между всеми языками", replyMarkup: GetRkm(allLangs));
                                 Logger.Menu(m, 3);
                                 return;
                         }
@@ -223,7 +215,7 @@ namespace TGBotCSharp
                     else
                     {
                         Logger.WrongText(m);
-                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
+                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(usualLangs));
                         Logger.Sent(m, "{Error sticker}");
                     }
                     break;
@@ -263,7 +255,7 @@ namespace TGBotCSharp
                     else
                     {
                         Logger.WrongText(m);
-                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
+                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(allLangs));
                         Logger.Sent(m, "{Error sticker}");
                     }
                     break;
