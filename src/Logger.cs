@@ -27,35 +27,37 @@ namespace TGBotCSharp
 
             sw.Close();
         }
-        static public void Got(MessageEventArgs e)
+        static public void Got(MessageEventArgs m)
         {
-            Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName}:\t\t\"{e.Message.Text}\".", false);
+            Log($"{m.Message.Chat.Id}.{m.Message.From.Id}:{m.Message.From.FirstName} ({m.Message.From.Username}) {m.Message.From.LastName}:\t\t\"{m.Message.Text}\".{m.Message.MessageId}.", true);
+            Log($"{m.Message.Chat.Id}:{m.Message.From.FirstName}:\t\t\"{m.Message.Text}\".", false);
         }
-        static public void Sent(MessageEventArgs e, string msgText)
+        static public void Sent(MessageEventArgs m, string msgText)
         {
-            Log($"Bot to {e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
+            Log($"Bot to {m.Message.Chat.Id}.{m.Message.From.Id}:{m.Message.From.FirstName} ({m.Message.From.Username}) {m.Message.From.LastName}:\t\"{msgText}\".\n\n", true);
+            Log($"Bot to {m.Message.Chat.Id}:{m.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
         }
-        static public void Menu(MessageEventArgs e, int menuButton, User user = null)
+        static public void Menu(MessageEventArgs m, int menuButton, User user = null)
         {
             switch (menuButton)
             {
                 case 0:
-                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting SrcLang change.", false);
+                    Log($"{m.Message.From.Id}:{m.Message.From.FirstName} requesting SrcLang change.", false);
                     break;
                 case 1:
-                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting ToLang change.", false);
+                    Log($"{m.Message.From.Id}:{m.Message.From.FirstName} requesting ToLang change.", false);
                     break;
                 case 2:
-                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting status.", false);
+                    Log($"{m.Message.From.Id}:{m.Message.From.FirstName} requesting status.", false);
                     break;
                 case 3:
-                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting all langs.", false);
+                    Log($"{m.Message.From.Id}:{m.Message.From.FirstName} requesting all langs.", false);
                     break;
                 case 4:
-                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching langs ({user.SrcLang.LangCode} and {user.ToLang.LangCode}).", false);
+                    Log($"{m.Message.From.Id}:{m.Message.From.FirstName} requesting switching langs ({user.SrcLang.LangCode} and {user.ToLang.LangCode}).", false);
                     break;
                 case 5:
-                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching reverse mode (from {user.ReverseMode}).", false);
+                    Log($"{m.Message.From.Id}:{m.Message.From.FirstName} requesting switching reverse mode (from {user.ReverseMode}).", false);
                     break;
             }
         }
@@ -105,15 +107,15 @@ namespace TGBotCSharp
         {
             Log($"Bot \"{name}\" started.\n", false);
         }
-        static public void ChangeLang(MessageEventArgs e, bool isSrcLangChanges, string langName)
+        static public void ChangeLang(MessageEventArgs m, bool isSrcLangChanges, string langName)
         {
             if (isSrcLangChanges)
             {
-                Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} switching source language to \"{langName}\".", false);
+                Log($"{m.Message.From.Id}:{m.Message.From.FirstName} switching source language to \"{langName}\".", false);
             }
             else
             {
-                Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} switching destination language to \"{langName}\".", false);
+                Log($"{m.Message.From.Id}:{m.Message.From.FirstName} switching destination language to \"{langName}\".", false);
             }
         }
         static public void FoundUser(int userId, bool isFromDb)

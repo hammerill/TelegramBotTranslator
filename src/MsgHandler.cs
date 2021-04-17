@@ -36,7 +36,7 @@ namespace TGBotCSharp
 
             switch (user.State)
             {
-                case 0: //main state
+                case 0: //Main state
                     var command = CmdHandler.GetCommand(m);
                     if (command != null) //Command handled
                     {
@@ -46,14 +46,14 @@ namespace TGBotCSharp
                         if (cmdText == "/start")
                         {
                             string msgText = "Выберите язык и бот будет переводить введённый вами текст";
-                            await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu));
+                            await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu), replyToMessageId: m.Message.MessageId);
 
                             Logger.Sent(m, "{Start message}");
                         }
                         else
                         {
                             Logger.Err(4, info: cmdText);
-                            await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
+                            await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyToMessageId: m.Message.MessageId);
                             Logger.Sent(m, "{Error sticker}");
                         }
                     }
@@ -74,12 +74,12 @@ namespace TGBotCSharp
 
                         if (translated != null)
                         {
-                            await bot.SendTextMessageAsync(m.Message.Chat, translated);
+                            await bot.SendTextMessageAsync(m.Message.Chat, translated, replyToMessageId: m.Message.MessageId);
                             Logger.Sent(m, translated);
                         }
                         else
                         {
-                            await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId);
+                            await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyToMessageId: m.Message.MessageId);
                             Logger.Sent(m, "{Error sticker}");
                         }
 
@@ -90,9 +90,9 @@ namespace TGBotCSharp
 
                         string MsgText = "Выберите исходный язык";
 
-                        dc.UpdateUserState(user, 1, true); //setting state to usual SrcLang changing
+                        dc.UpdateUserState(user, 1, true); //Setting state to usual SrcLang changing
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: GetRkm(usualLangs));
+                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: GetRkm(usualLangs), replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, MsgText);
                     }
                     else if (m.Message.Text == mainMenu[1]) //ToLang change
@@ -101,9 +101,9 @@ namespace TGBotCSharp
 
                         string MsgText = "Выберите выводимый язык";
 
-                        dc.UpdateUserState(user, 1, false); //setting state to usual ToLang changing
+                        dc.UpdateUserState(user, 1, false); //Setting state to usual ToLang changing
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: GetRkm(usualLangs));
+                        await bot.SendTextMessageAsync(m.Message.Chat, MsgText, replyMarkup: GetRkm(usualLangs), replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, MsgText);
                     }
                     else if (m.Message.Text == mainMenu[2]) //Langs switching
@@ -117,7 +117,7 @@ namespace TGBotCSharp
                         ChangeLang(m, true, OldTo);
                         ChangeLang(m, false, OldSrc);
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, msgText);
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, msgText);
                     }
                     else if (m.Message.Text == mainMenu[3]) //Reverse mode switching
@@ -137,7 +137,7 @@ namespace TGBotCSharp
                             dc.UpdateReverseMode(user, true);
                         }
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, msgText);
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, msgText);
                     }
                     else //Get status
@@ -154,11 +154,11 @@ namespace TGBotCSharp
                             msgText = $"Исходным языком является {user.SrcLang.FriendlyTitle}\nВыводимым языком является {user.ToLang.FriendlyTitle}\nРежим обратного перевода выключен";
                         }
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, msgText);
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, $"{{SrcLang: \"{user.SrcLang.LangCode}\", ToLang: \"{user.ToLang.LangCode}\", RevMode: {user.ReverseMode}}}");
                     }
                     break;
-                case 1: //usual langs changing
+                case 1: //Usual langs changing
                     if (usualLangs.Exists(a => a == m.Message.Text))
                     {
                         string msgText;
@@ -196,9 +196,9 @@ namespace TGBotCSharp
                                     }
                                 }
 
-                                dc.UpdateUserState(user, 2, user.IsSrcLangChanges == 1); //setting state to all langs changing
+                                dc.UpdateUserState(user, 2, user.IsSrcLangChanges == 1); //Setting state to all langs changing
 
-                                await bot.SendTextMessageAsync(m.Message.Chat, "Выберите между всеми языками", replyMarkup: GetRkm(allLangs));
+                                await bot.SendTextMessageAsync(m.Message.Chat, "Выберите между всеми языками", replyMarkup: GetRkm(allLangs), replyToMessageId: m.Message.MessageId);
                                 Logger.Menu(m, 3);
                                 return;
                         }
@@ -207,15 +207,15 @@ namespace TGBotCSharp
 
                         msgText += selectedLang.FriendlyTitle;
 
-                        dc.UpdateUserState(user); //resetting state
+                        dc.UpdateUserState(user); //Resetting state
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu));
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu), replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, "{Lang changed}");
                     }
                     else
                     {
                         Logger.WrongText(m);
-                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(usualLangs));
+                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(usualLangs), replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, "{Error sticker}");
                     }
                     break;
@@ -249,13 +249,13 @@ namespace TGBotCSharp
 
                         dc.UpdateUserState(user); //resetting state
 
-                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu));
+                        await bot.SendTextMessageAsync(m.Message.Chat, msgText, replyMarkup: GetRkm(mainMenu), replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, "{Lang changed}");
                     }
                     else
                     {
                         Logger.WrongText(m);
-                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(allLangs));
+                        await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(allLangs), replyToMessageId: m.Message.MessageId);
                         Logger.Sent(m, "{Error sticker}");
                     }
                     break;
@@ -264,7 +264,7 @@ namespace TGBotCSharp
 
                     dc.UpdateUserState(user, 0, true);
 
-                    await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(mainMenu));
+                    await bot.SendStickerAsync(m.Message.Chat, bs.ErrorStickerId, replyMarkup: GetRkm(mainMenu), replyToMessageId: m.Message.MessageId);
                     Logger.Sent(m, "{Error sticker}");
                     break;
             }
