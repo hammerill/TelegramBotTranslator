@@ -29,13 +29,13 @@ namespace TGBotCSharp
         }
         static public void Got(MessageEventArgs m)
         {
-            Log($"{m.Message.Chat.Id}.{m.Message.From.Id}:{m.Message.From.FirstName} ({m.Message.From.Username}) {m.Message.From.LastName}:\t\t\"{m.Message.Text}\".{m.Message.MessageId}.", true);
-            Log($"{m.Message.Chat.Id}:{m.Message.From.FirstName}:\t\t\"{m.Message.Text}\".", false);
+            Log($"{m.Message.Chat.Id}.{m.Message.From.Id}:{m.Message.From.FirstName} ({m.Message.From.Username}) {m.Message.From.LastName}:\t\t\"{m.Message.Text}\".{m.Message.MessageId}", true);
+            Log($"{m.Message.Chat.Id}:{m.Message.From.FirstName}:\t\t\"{m.Message.Text}\"", false);
         }
         static public void Sent(MessageEventArgs m, string msgText)
         {
-            Log($"Bot to {m.Message.Chat.Id}.{m.Message.From.Id}:{m.Message.From.FirstName} ({m.Message.From.Username}) {m.Message.From.LastName}:\t\"{msgText}\".\n\n", true);
-            Log($"Bot to {m.Message.Chat.Id}:{m.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
+            Log($"Bot to {m.Message.Chat.Id}.{m.Message.From.Id}:{m.Message.From.FirstName} ({m.Message.From.Username}) {m.Message.From.LastName}:\t\"{msgText}\"", true);
+            Log($"Bot to {m.Message.Chat.Id}:{m.Message.From.FirstName}:\t\"{msgText}\"\n\n", false);
         }
         static public void Menu(MessageEventArgs m, int menuButton, User user = null)
         {
