@@ -29,33 +29,33 @@ namespace TGBotCSharp
         }
         static public void Got(MessageEventArgs e)
         {
-            Log($"{e.Message.From.Id}:{e.Message.From.FirstName}:\t\t\"{e.Message.Text}\".", false);
+            Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName}:\t\t\"{e.Message.Text}\".", false);
         }
         static public void Sent(MessageEventArgs e, string msgText)
         {
-            Log($"Bot to {e.Message.From.Id}:{e.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
+            Log($"Bot to {e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName}:\t\"{msgText}\".\n\n", false);
         }
         static public void Menu(MessageEventArgs e, int menuButton, User user = null)
         {
             switch (menuButton)
             {
                 case 0:
-                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting SrcLang change.", false);
+                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting SrcLang change.", false);
                     break;
                 case 1:
-                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting ToLang change.", false);
+                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting ToLang change.", false);
                     break;
                 case 2:
-                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting status.", false);
+                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting status.", false);
                     break;
                 case 3:
-                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting all langs.", false);
+                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting all langs.", false);
                     break;
                 case 4:
-                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching langs ({user.SrcLang.LangCode} and {user.ToLang.LangCode}).", false);
+                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching langs ({user.SrcLang.LangCode} and {user.ToLang.LangCode}).", false);
                     break;
                 case 5:
-                    Log($"{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching reverse mode (from {user.ReverseMode}).", false);
+                    Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} requesting switching reverse mode (from {user.ReverseMode}).", false);
                     break;
             }
         }
@@ -109,11 +109,11 @@ namespace TGBotCSharp
         {
             if (isSrcLangChanges)
             {
-                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching source language to \"{langName}\".", false);
+                Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} switching source language to \"{langName}\".", false);
             }
             else
             {
-                Log($"{e.Message.From.Id}:{e.Message.From.FirstName} switching destination language to \"{langName}\".", false);
+                Log($"{e.Message.Chat.Id}.{e.Message.From.Id}:{e.Message.From.FirstName} switching destination language to \"{langName}\".", false);
             }
         }
         static public void FoundUser(int userId, bool isFromDb)
