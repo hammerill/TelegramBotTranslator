@@ -1,18 +1,18 @@
 # TelegramBotTranslator
-Телеграм бот написанный на C#, который переводит текст с разных языков используя GoogleAPI.
+Telegram bot written in C# that translates text from many languages using GoogleAPI.
 
 
 
-Установка и запуск
+Installation and launch
 ========================
 
-1. Убедитесь, что вы скопировали репозиторий себе, а затем в корне репозитория откройте файл "default_botsettings.json", где вставьте параметр "tokenString", содержащий токен вашего бота, выданный t.me/BotFather.
-2. Переименуйте файл "default_botsettings.json" в "botsettings.json".
-3. Откройте sln файл при помощи Visual Studio и запустите проект, скомпилировав его.
+1. Ensure that you've cloned this repo to yourself, then open a "default_botsettings.json" in its root and change the value of the "tokenString" parameter to the token given by t.me/BotFather.
+2. Rename "default_botsettings.json" to "botsettings.json".
+3. Open .sln file with Visual studio and launch project by compiling it.
 
 
 
-Планы на будущее
+Future plans
 ========================
 
-Глобальные планы на будущее пока отсутствуют.
+Global future plans are currently absent.
